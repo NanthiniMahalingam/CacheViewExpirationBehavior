@@ -1,7 +1,5 @@
 # CacheViewExpirationBehavior
 
-# InputFile OnChange when the user cancels the file picker
-
 Validation Scenario: https://github.com/dotnet/aspnetcore/issues/69120
 
 ## Build tested
