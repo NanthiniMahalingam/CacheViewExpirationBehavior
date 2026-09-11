@@ -1,0 +1,107 @@
+﻿@page "/"
+
+<PageTitle>CacheView expiration</PageTitle>
+
+<h1>CacheView expiration</h1>
+
+<p class="lead">
+	Refresh this page to access each entry. A changed GUID means that the cached
+	section expired and its child component was initialized again.
+</p>
+
+<div class="alert alert-secondary" role="status">
+	<strong>Current server time:</strong> @RequestTime.ToString(TimestampFormat)
+</div>
+
+<div class="row g-3">
+	<div class="col-lg-6">
+		<section class="border rounded p-3 h-100">
+			<h2 class="h5">ExpiresAfter</h2>
+			<p>Lifetime from creation: <strong>@ShortLifetime</strong></p>
+			<CacheView CacheKey="expires-after" ExpiresAfter="ShortLifetime">
+				<CacheStamp Name="ExpiresAfter" />
+			</CacheView>
+		</section>
+	</div>
+
+	<div class="col-lg-6">
+		<section class="border rounded p-3 h-100">
+			<h2 class="h5">ExpiresOn</h2>
+			<p>Fixed deadline for this process: <strong>@FixedDeadline.ToString(TimestampFormat)</strong></p>
+			<CacheView CacheKey="expires-on" ExpiresOn="FixedDeadline">
+				<CacheStamp Name="ExpiresOn" />
+			</CacheView>
+		</section>
+	</div>
+
+	<div class="col-lg-6">
+		<section class="border rounded p-3 h-100">
+			<h2 class="h5">ExpiresSliding</h2>
+			<p>
+				Idle window: <strong>@SlidingWindow</strong>;
+				absolute lifetime: <strong>@SlidingAbsoluteLifetime</strong>
+			</p>
+			<CacheView CacheKey="expires-sliding"
+					   ExpiresSliding="SlidingWindow"
+					   ExpiresAfter="SlidingAbsoluteLifetime">
+				<CacheStamp Name="ExpiresSliding" />
+			</CacheView>
+		</section>
+	</div>
+
+	<div class="col-lg-6">
+		<section class="border rounded p-3 h-100">
+			<h2 class="h5">ExpiresSliding only</h2>
+			<p>
+				Idle window: <strong>@SlidingWindow</strong>;
+				no explicit absolute lifetime
+			</p>
+			<CacheView CacheKey="expires-sliding-only"
+					   ExpiresSliding="SlidingWindow">
+				<CacheStamp Name="ExpiresSliding only" />
+			</CacheView>
+		</section>
+	</div>
+
+	<div class="col-lg-6">
+		<section class="border rounded p-3 h-100">
+			<h2 class="h5">Default expiration</h2>
+			<p>No expiration parameter; documented default: <strong>00:00:30</strong></p>
+			<CacheView CacheKey="default-expiration">
+				<CacheStamp Name="Default" />
+			</CacheView>
+		</section>
+	</div>
+
+	<div class="col-lg-6">
+		<section class="border rounded p-3 h-100">
+			<h2 class="h5">ExpiresAfter and ExpiresOn</h2>
+			<p>
+				Period: <strong>@CombinedPeriod</strong>;
+				fixed moment: <strong>@CombinedDeadline.ToString(TimestampFormat)</strong>
+			</p>
+			<CacheView CacheKey="expires-after-and-on"
+					   ExpiresAfter="CombinedPeriod"
+					   ExpiresOn="CombinedDeadline">
+				<CacheStamp Name="ExpiresAfter and ExpiresOn" />
+			</CacheView>
+		</section>
+	</div>
+</div>
+
+<p class="mt-3 text-body-secondary">
+	The default store is process-local memory. Restarting the app clears every entry,
+	so no cached GUID can outlive the process.
+</p>
+
+@code {
+	private const string TimestampFormat = "yyyy-MM-dd HH:mm:ss.fff zzz";
+	private static readonly TimeSpan ShortLifetime = TimeSpan.FromSeconds(10);
+	private static readonly TimeSpan SlidingWindow = TimeSpan.FromSeconds(10);
+	private static readonly TimeSpan SlidingAbsoluteLifetime = TimeSpan.FromMinutes(2);
+	private static readonly DateTimeOffset FixedDeadline = DateTimeOffset.Now.AddSeconds(30);
+	private static readonly TimeSpan CombinedPeriod = TimeSpan.FromSeconds(10);
+	private static readonly DateTimeOffset CombinedDeadline = DateTimeOffset.Now.AddSeconds(30);
+
+	private DateTimeOffset RequestTime { get; } = DateTimeOffset.Now;
+}
