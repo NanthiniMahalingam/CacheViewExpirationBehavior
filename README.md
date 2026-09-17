@@ -6,14 +6,14 @@ behavior described in [dotnet/aspnetcore#69120](https://github.com/dotnet/aspnet
 ## Source
 
 - Public repository: https://github.com/NanthiniMahalingam/CacheViewExpirationBehavior
-- Immutable tested commit: https://github.com/NanthiniMahalingam/CacheViewExpirationBehavior/commit/4fe3f6d803c2a8a5a80935a96d01103c40576049
+- Immutable tested commit: https://github.com/NanthiniMahalingam/CacheViewExpirationBehavior/commit/b302f1c9370af906fcbb08287cc556ca56767507
 
 To reproduce the tested source exactly:
 
 ```powershell
 git clone https://github.com/NanthiniMahalingam/CacheViewExpirationBehavior.git
 Set-Location CacheViewExpirationBehavior
-git checkout --detach 4fe3f6d803c2a8a5a80935a96d01103c40576049
+git checkout --detach b302f1c9370af906fcbb08287cc556ca56767507
 ```
 
 ## Prerequisites
