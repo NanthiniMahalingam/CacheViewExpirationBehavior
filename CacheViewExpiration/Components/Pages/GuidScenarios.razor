@@ -1,0 +1,89 @@
+@page "/guid-scenarios"
+
+<PageTitle>CacheView GUID scenarios</PageTitle>
+
+<div class="alert alert-secondary" role="status">
+	<strong>Current server time:</strong> @RequestTime.ToString(TimestampFormat)
+</div>
+
+<div class="row g-2">
+	<div class="col-lg-4">
+		<section class="border rounded p-2 h-100">
+			<h2 class="h5">ExpiresAfter</h2>
+			<p>GUID lifetime: <strong>10 seconds</strong></p>
+			<CacheView CacheKey="guid-scenarios-expires-after" ExpiresAfter="TenSeconds">
+				<CacheStamp Name="ExpiresAfter 10 seconds" />
+			</CacheView>
+		</section>
+	</div>
+
+	<div class="col-lg-4">
+		<section class="border rounded p-2 h-100">
+			<h2 class="h5">ExpiresOn</h2>
+			<p>Fixed deadline: <strong>@ThirtySecondDeadline.ToString(TimestampFormat)</strong></p>
+			<CacheView CacheKey="guid-scenarios-expires-on" ExpiresOn="ThirtySecondDeadline">
+				<CacheStamp Name="ExpiresOn 30 seconds" />
+			</CacheView>
+		</section>
+	</div>
+
+	<div class="col-lg-4">
+		<section class="border rounded p-2 h-100">
+			<h2 class="h5">Sliding 10 seconds + absolute 2 minutes</h2>
+			@* <p>
+				The GUID expires after 10 seconds without a reload, or after 2 minutes
+				regardless of reloads.
+			</p> *@
+			<CacheView CacheKey="guid-scenarios-sliding-absolute"
+					   ExpiresSliding="TenSeconds"
+					   ExpiresAfter="TwoMinutes">
+				<CacheStamp Name="Sliding 10 seconds + absolute 2 minutes" />
+			</CacheView>
+		</section>
+	</div>
+
+	<div class="col-lg-4">
+		<section class="border rounded p-2 h-100">
+			<h2 class="h5">Sliding only</h2>
+			<p>GUID idle lifetime: <strong>10 seconds</strong></p>
+			<CacheView CacheKey="guid-scenarios-sliding-only" ExpiresSliding="TenSeconds">
+				<CacheStamp Name="Sliding only 10 seconds" />
+			</CacheView>
+		</section>
+	</div>
+
+	<div class="col-lg-4">
+		<section class="border rounded p-2 h-100">
+			<h2 class="h5">Default</h2>
+			<p>No expiration option is supplied.</p>
+			<CacheView CacheKey="guid-scenarios-default">
+				<CacheStamp Name="Default" />
+			</CacheView>
+		</section>
+	</div>
+
+	<div class="col-lg-4">
+		<section class="border rounded p-2 h-100">
+			<h2 class="h5">ExpiresAfter + ExpiresOn</h2>
+			<p>
+				Relative period: <strong>10 seconds</strong>;
+				fixed deadline: <strong>@CombinedDeadline.ToString(TimestampFormat)</strong>
+			</p>
+			<CacheView CacheKey="guid-scenarios-expires-after-and-on"
+					   ExpiresAfter="TenSeconds"
+					   ExpiresOn="CombinedDeadline">
+				<CacheStamp Name="ExpiresAfter + ExpiresOn" />
+			</CacheView>
+		</section>
+	</div>
+</div>
+
+@code {
+	private const string TimestampFormat = "yyyy-MM-dd HH:mm:ss.fff zzz";
+	private static readonly TimeSpan TenSeconds = TimeSpan.FromSeconds(10);
+	private static readonly TimeSpan TwoMinutes = TimeSpan.FromMinutes(2);
+	private static readonly DateTimeOffset ThirtySecondDeadline = DateTimeOffset.Now.AddSeconds(30);
+	private static readonly DateTimeOffset CombinedDeadline = DateTimeOffset.Now.AddSeconds(30);
+
+	private DateTimeOffset RequestTime { get; } = DateTimeOffset.Now;
+}

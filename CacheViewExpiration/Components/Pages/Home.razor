@@ -36,6 +36,19 @@
 
 	<div class="col-lg-6">
 		<section class="border rounded p-3 h-100">
+			<h2 class="h5">ExpiresOn already passed</h2>
+			<p>
+				Past deadline: <strong>@PastDeadline.ToString(TimestampFormat)</strong>.
+				Record this load, then refresh immediately and record the next load.
+			</p>
+			<CacheView CacheKey="expires-on-already-passed" ExpiresOn="PastDeadline">
+				<CacheStamp Name="ExpiresOn already passed" />
+			</CacheView>
+		</section>
+	</div>
+
+	<div class="col-lg-6">
+		<section class="border rounded p-3 h-100">
 			<h2 class="h5">ExpiresSliding</h2>
 			<p>
 				Idle window: <strong>@SlidingWindow</strong>;
@@ -79,6 +92,17 @@
 			<p>
 				Period: <strong>@CombinedPeriod</strong>;
 				fixed moment: <strong>@CombinedDeadline.ToString(TimestampFormat)</strong>
+				<strong>Current server time:</strong> @RequestTime.ToString(TimestampFormat)
+			</p>
+			<ol>
+				<li>Record the GUID before the fixed moment.</li>
+				<li>Reload immediately after the fixed moment and record the new GUID.</li>
+				<li>Reload again immediately, within the @CombinedPeriod period.</li>
+			</ol>
+			<p>
+				<strong>Expected result:</strong> the GUID changes on both post-expiry reloads.
+				The second change proves that the first post-expiry render did not create a new
+				future @CombinedPeriod window, so the past <code>ExpiresOn</code> deadline wins.
 			</p>
 			<CacheView CacheKey="expires-after-and-on"
 					   ExpiresAfter="CombinedPeriod"
@@ -100,6 +124,7 @@
 	private static readonly TimeSpan SlidingWindow = TimeSpan.FromSeconds(10);
 	private static readonly TimeSpan SlidingAbsoluteLifetime = TimeSpan.FromMinutes(2);
 	private static readonly DateTimeOffset FixedDeadline = DateTimeOffset.Now.AddSeconds(30);
+	private static readonly DateTimeOffset PastDeadline = DateTimeOffset.Now.AddSeconds(-30);
 	private static readonly TimeSpan CombinedPeriod = TimeSpan.FromSeconds(10);
 	private static readonly DateTimeOffset CombinedDeadline = DateTimeOffset.Now.AddSeconds(30);
 
